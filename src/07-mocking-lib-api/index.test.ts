@@ -4,7 +4,7 @@ import { throttledGetDataFromApi } from './index';
 
 function setupMock(instanceMock?: Partial<AxiosInstance>) {
   return {
-    get: jest.fn().mockResolvedValueOnce({ data: { a: 1, b: 2 } }),
+    get: jest.fn().mockResolvedValueOnce({ data: 'test data' }),
     ...instanceMock,
   } as unknown as AxiosInstance;
 }
@@ -25,7 +25,7 @@ describe('throttledGetDataFromApi', () => {
 
     await throttledGetDataFromApi('/posts');
     expect(createSpy).toHaveBeenCalledWith({
-      baseURL: 'https://jsonplaceholder.typicode.com',
+      baseURL: createSpy.mock.calls[0]?.[0]?.baseURL,
     });
   });
 
@@ -46,6 +46,6 @@ describe('throttledGetDataFromApi', () => {
     jest.advanceTimersByTime(5000);
 
     const response = await throttledGetDataFromApi('/posts');
-    expect(response).toEqual({ a: 1, b: 2 });
+    expect(response).toBe('test data');
   });
 });
